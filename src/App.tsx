@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './index.css';
+import { movieService } from '@/services/movieService';
 
-// Demo movies for display
+// Demo movies for display when API is unavailable
 const DEMO_MOVIES = [
   {
     id: 1,
@@ -33,9 +34,45 @@ const DEMO_MOVIES = [
 ];
 
 export default function App() {
-  const displayHeroMovie = DEMO_MOVIES[0];
-  const displayPopular = DEMO_MOVIES.slice(1);
-  const displayNew = DEMO_MOVIES;
+  const [popularMovies, setPopularMovies] = useState(DEMO_MOVIES);
+  const [newReleaseMovies, setNewReleaseMovies] = useState(DEMO_MOVIES);
+  const [heroMovie, setHeroMovie] = useState(DEMO_MOVIES[0]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const [popular, nowPlaying] = await Promise.all([
+          movieService.getPopularMovies(1),
+          movieService.getNowPlayingMovies(1),
+        ]);
+
+        if (popular.results && popular.results.length > 0) {
+          setPopularMovies(popular.results);
+          setHeroMovie(popular.results[0]);
+        }
+        
+        if (nowPlaying.results && nowPlaying.results.length > 0) {
+          setNewReleaseMovies(nowPlaying.results);
+        }
+      } catch (err) {
+        console.error('[v0] Error fetching movies:', err);
+        setError('Using demo data. Set VITE_TMDB_API_KEY in .env to load real data from TMDB.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovies();
+  }, []);
+
+  const displayHeroMovie = heroMovie;
+  const displayPopular = popularMovies.slice(1, 9);
+  const displayNew = newReleaseMovies.slice(0, 12);
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#000000' }}>
@@ -61,6 +98,12 @@ export default function App() {
 
       {/* Main Content */}
       <main style={{ flex: 1, maxWidth: '1280px', margin: '0 auto', width: '100%', padding: '2rem 1rem' }}>
+        {error && (
+          <div style={{ backgroundColor: '#1f2937', color: '#93c5fd', padding: '1rem', borderRadius: '0.5rem', marginBottom: '2rem', border: '1px solid #374151', fontSize: '0.875rem' }}>
+            {error}
+          </div>
+        )}
+
         {/* Hero Section */}
         {displayHeroMovie && (
           <div style={{ 
