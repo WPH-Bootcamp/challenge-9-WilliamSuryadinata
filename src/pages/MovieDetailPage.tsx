@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 // Demo movies data
 const DEMO_MOVIES: Record<number, any> = {
@@ -43,6 +44,48 @@ const DEMO_MOVIES: Record<number, any> = {
   },
 };
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+    },
+  },
+};
+
+const castCardVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      ease: 'easeOut',
+    },
+  },
+  hover: {
+    y: -4,
+    transition: {
+      duration: 0.2,
+    },
+  },
+};
+
 export function MovieDetailPage() {
   const { movieId } = useParams<{ movieId: string }>();
   const navigate = useNavigate();
@@ -51,9 +94,13 @@ export function MovieDetailPage() {
   if (!movie) {
     return (
       <main style={{ flex: 1, maxWidth: '1280px', margin: '0 auto', width: '100%', padding: '2rem 1rem' }}>
-        <div style={{ textAlign: 'center', color: '#888' }}>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          style={{ textAlign: 'center', color: '#888' }}
+        >
           <h1 style={{ color: 'white' }}>Movie not found</h1>
-          <button 
+          <motion.button 
             onClick={() => navigate('/')}
             style={{
               marginTop: '1rem',
@@ -66,29 +113,39 @@ export function MovieDetailPage() {
               fontWeight: '600',
               fontSize: '0.875rem'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#b91c1c'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+            whileHover={{ backgroundColor: '#b91c1c', scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
           >
             Back to Home
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </main>
     );
   }
 
   return (
-    <main style={{ flex: 1, width: '100%' }}>
+    <motion.main 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      style={{ flex: 1, width: '100%' }}
+    >
       {/* Hero Section with Back Button */}
-      <div style={{
-        position: 'relative',
-        height: '500px',
-        backgroundColor: '#dc2626',
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'flex-start',
-        padding: '2rem',
-        marginBottom: '2rem'
-      }}>
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        style={{
+          position: 'relative',
+          height: '500px',
+          backgroundColor: '#dc2626',
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'flex-start',
+          padding: '2rem',
+          marginBottom: '2rem'
+        }}
+      >
         <div style={{
           position: 'absolute',
           top: 0,
@@ -99,7 +156,7 @@ export function MovieDetailPage() {
           zIndex: 1
         }} />
         
-        <button
+        <motion.button
           onClick={() => navigate('/')}
           style={{
             position: 'absolute',
@@ -111,16 +168,20 @@ export function MovieDetailPage() {
             border: 'none',
             borderRadius: '0.375rem',
             cursor: 'pointer',
-            zIndex: 10,
-            transition: 'background-color 0.2s ease'
+            zIndex: 10
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'}
+          whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.8)', scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
         >
           ← Back
-        </button>
+        </motion.button>
 
-        <div style={{ maxWidth: '600px', zIndex: 10 }}>
+        <motion.div 
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+          style={{ maxWidth: '600px', zIndex: 10 }}
+        >
           <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', margin: '0 0 1rem 0' }}>
             {movie.title}
           </h1>
@@ -135,10 +196,18 @@ export function MovieDetailPage() {
               {movie.runtime} min
             </span>
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-            {movie.genres.map((genre: string) => (
-              <span
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}
+          >
+            {movie.genres.map((genre: string, index: number) => (
+              <motion.span
                 key={genre}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 + index * 0.1 }}
                 style={{
                   backgroundColor: 'rgba(220, 38, 38, 0.3)',
                   color: '#fca5a5',
@@ -149,91 +218,142 @@ export function MovieDetailPage() {
                 }}
               >
                 {genre}
-              </span>
+              </motion.span>
             ))}
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       {/* Content Section */}
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1rem 2rem' }}>
         {/* Overview */}
-        <section style={{ marginBottom: '3rem' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: 'white' }}>
+        <motion.section 
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+          style={{ marginBottom: '3rem' }}
+        >
+          <motion.h2 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: 'white' }}
+          >
             Overview
-          </h2>
-          <p style={{ color: 'rgba(255, 255, 255, 0.8)', lineHeight: '1.8', maxWidth: '800px' }}>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            style={{ color: 'rgba(255, 255, 255, 0.8)', lineHeight: '1.8', maxWidth: '800px' }}
+          >
             {movie.overview}
-          </p>
-        </section>
+          </motion.p>
+        </motion.section>
 
         {/* Details Grid */}
-        <section style={{ marginBottom: '3rem' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: 'white' }}>
+        <motion.section 
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+          style={{ marginBottom: '3rem' }}
+        >
+          <motion.h2 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.15 }}
+            style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: 'white' }}
+          >
             Details
-          </h2>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '1.5rem'
-          }}>
-            <div style={{ backgroundColor: '#1a1a1a', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid #333' }}>
-              <p style={{ color: '#888', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Director</p>
-              <p style={{ color: 'white', fontWeight: '600' }}>{movie.director}</p>
-            </div>
-            <div style={{ backgroundColor: '#1a1a1a', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid #333' }}>
-              <p style={{ color: '#888', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Budget</p>
-              <p style={{ color: 'white', fontWeight: '600' }}>${(movie.budget / 1000000).toFixed(0)}M</p>
-            </div>
-            <div style={{ backgroundColor: '#1a1a1a', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid #333' }}>
-              <p style={{ color: '#888', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Revenue</p>
-              <p style={{ color: 'white', fontWeight: '600' }}>${(movie.revenue / 1000000).toFixed(0)}M</p>
-            </div>
-          </div>
-        </section>
+          </motion.h2>
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '1.5rem'
+            }}
+          >
+            {[
+              { label: 'Director', value: movie.director },
+              { label: 'Budget', value: `$${(movie.budget / 1000000).toFixed(0)}M` },
+              { label: 'Revenue', value: `$${(movie.revenue / 1000000).toFixed(0)}M` }
+            ].map((detail, index) => (
+              <motion.div
+                key={detail.label}
+                variants={itemVariants}
+                whileHover={{ y: -4 }}
+                style={{ backgroundColor: '#1a1a1a', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid #333' }}
+              >
+                <p style={{ color: '#888', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{detail.label}</p>
+                <p style={{ color: 'white', fontWeight: '600' }}>{detail.value}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.section>
 
         {/* Cast */}
-        <section style={{ marginBottom: '3rem' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: 'white' }}>
+        <motion.section 
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+          style={{ marginBottom: '3rem' }}
+        >
+          <motion.h2 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: 'white' }}
+          >
             Cast
-          </h2>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-            gap: '1rem'
-          }}>
+          </motion.h2>
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+              gap: '1rem'
+            }}
+          >
             {movie.cast.map((actor: string) => (
-              <div
+              <motion.div
                 key={actor}
+                variants={castCardVariants}
+                whileHover="hover"
                 style={{
                   backgroundColor: '#1a1a1a',
                   padding: '1rem',
                   borderRadius: '0.5rem',
                   border: '1px solid #333',
-                  textAlign: 'center',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#262626';
-                  e.currentTarget.style.boxShadow = '0 0 15px rgba(220, 38, 38, 0.3)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#1a1a1a';
-                  e.currentTarget.style.boxShadow = 'none';
+                  textAlign: 'center'
                 }}
               >
                 <p style={{ color: 'white', fontWeight: '600', margin: '0' }}>
                   {actor}
                 </p>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
         {/* Related Actions */}
-        <section style={{ marginBottom: '3rem' }}>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <button
+        <motion.section 
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+          style={{ marginBottom: '3rem' }}
+        >
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}
+          >
+            <motion.button
               style={{
                 backgroundColor: '#dc2626',
                 color: 'white',
@@ -242,15 +362,14 @@ export function MovieDetailPage() {
                 borderRadius: '0.375rem',
                 cursor: 'pointer',
                 fontWeight: '600',
-                fontSize: '0.875rem',
-                transition: 'background-color 0.2s ease'
+                fontSize: '0.875rem'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#b91c1c'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+              whileHover={{ backgroundColor: '#b91c1c', scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
             >
               ❤️ Add to Favorites
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               style={{
                 backgroundColor: 'transparent',
                 color: '#dc2626',
@@ -259,21 +378,16 @@ export function MovieDetailPage() {
                 borderRadius: '0.375rem',
                 cursor: 'pointer',
                 fontWeight: '600',
-                fontSize: '0.875rem',
-                transition: 'all 0.2s ease'
+                fontSize: '0.875rem'
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(220, 38, 38, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
+              whileHover={{ backgroundColor: 'rgba(220, 38, 38, 0.1)', scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
             >
               📺 Watch Trailer
-            </button>
-          </div>
-        </section>
+            </motion.button>
+          </motion.div>
+        </motion.section>
       </div>
-    </main>
+    </motion.main>
   );
 }
