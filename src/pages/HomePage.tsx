@@ -1,55 +1,91 @@
-import { useState } from 'react';
-import { usePopularMovies } from '@/hooks/useMovies';
-import { MovieGrid } from '@/components/Feature-components/MovieGrid';
-import { SearchBar } from '@/components/Feature-components/SearchBar';
-import { FilterSection } from '@/components/Feature-components/FilterSection';
-
 export function HomePage() {
-  const [page, setPage] = useState(1);
-  const [sortBy, setSortBy] = useState<'popular' | 'rating' | 'release_date'>('popular');
-  
-  try {
-    const { data, isLoading, isError } = usePopularMovies(page);
-
-    if (isError) {
-      return (
-        <div className="text-center py-12">
-          <p className="text-red-500">Error loading movies. Please try again.</p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="space-y-8">
-        <SearchBar />
-        <FilterSection sortBy={sortBy} onSortChange={setSortBy} />
-        <MovieGrid movies={data?.results || []} isLoading={isLoading} />
-        
-        {/* Pagination */}
-        <div className="flex justify-center gap-4 py-8">
-          <button
-            onClick={() => setPage(Math.max(1, page - 1))}
-            disabled={page === 1}
-            className="px-4 py-2 border rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <span className="px-4 py-2">Page {page}</span>
-          <button
-            onClick={() => setPage(page + 1)}
-            className="px-4 py-2 border rounded"
-          >
-            Next
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+      {/* Hero Section */}
+      <div style={{ 
+        position: 'relative',
+        height: '400px',
+        borderRadius: '0.5rem',
+        overflow: 'hidden',
+        backgroundColor: 'linear-gradient(to right, #dc2626, #991b1b)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center'
+      }}>
+        <div style={{ zIndex: 10 }}>
+          <h1 style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', margin: '0 0 1rem 0' }}>
+            Captain America: Brave New World
+          </h1>
+          <p style={{ fontSize: '1.25rem', color: 'rgba(255, 255, 255, 0.9)', margin: 0 }}>
+            Discover amazing movies
+          </p>
+          <button style={{
+            marginTop: '2rem',
+            backgroundColor: '#dc2626',
+            color: 'white',
+            padding: '0.75rem 1.5rem',
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontWeight: '600'
+          }}>
+            Watch Trailer
           </button>
         </div>
       </div>
-    );
-  } catch (error) {
-    console.error('[v0] Error in HomePage:', error);
-    return (
-      <div className="text-center py-12">
-        <p className="text-red-500">Error rendering page: {String(error)}</p>
+
+      {/* Trending Section */}
+      <div>
+        <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem', color: 'white' }}>
+          Trending Now
+        </h2>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+          gap: '1rem'
+        }}>
+          {[1,2,3,4,5,6].map(i => (
+            <div key={i} style={{
+              aspectRatio: '2 / 3',
+              backgroundColor: '#1a1a1a',
+              borderRadius: '0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#888'
+            }}>
+              Movie {i}
+            </div>
+          ))}
+        </div>
       </div>
-    );
-  }
+
+      {/* New Release Section */}
+      <div>
+        <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem', color: 'white' }}>
+          New Release
+        </h2>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+          gap: '1rem'
+        }}>
+          {[1,2,3,4,5,6,7,8,9,10,11,12].map(i => (
+            <div key={i} style={{
+              aspectRatio: '2 / 3',
+              backgroundColor: '#1a1a1a',
+              borderRadius: '0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#888'
+            }}>
+              New {i}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
