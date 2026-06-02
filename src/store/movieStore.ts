@@ -1,18 +1,72 @@
 import { create } from 'zustand';
-// import { Movie } from '@/types/movie';
+import { persist } from 'zustand/middleware';
+import { Movie } from '@/types/movie';
+import { STORAGE_KEYS } from '@/lib/constants';
 
-// TODO: Define your store state interface
 interface MovieStore {
-  // TODO: Add state properties
-  // Examples: favorites, watchlist, selectedMovie, etc.
+  // State
+  favorites: Movie[];
+  searchHistory: string[];
 
-  // TODO: Add action methods
-  // Examples: addToFavorites, removeFromFavorites, etc.
+  // Actions
+  addToFavorites: (movie: Movie) => void;
+  removeFromFavorites: (movieId: number) => void;
+  toggleFavorite: (movie: Movie) => void;
+  isFavorited: (movieId: number) => boolean;
+  addToSearchHistory: (query: string) => void;
+  clearSearchHistory: () => void;
 }
 
-// TODO: Create Zustand store
-// Reference: https://zustand.docs.pmnd.rs/getting-started/introduction
+export const useMovieStore = create<MovieStore>()(
+  persist(
+    (set, get) => ({
+      // Initial state
+      favorites: [],
+      searchHistory: [],
 
-export const useMovieStore = create<MovieStore>((set) => ({
-  // TODO: Initialize state and implement actions
-}));
+      // Actions
+      addToFavorites: (movie) =>
+        set((state) => ({
+          favorites: [
+            ...state.favorites.filter((m) => m.id !== movie.id),
+            movie,
+          ],
+        })),
+
+      removeFromFavorites: (movieId) =>
+        set((state) => ({
+          favorites: state.favorites.filter((m) => m.id !== movieId),
+        })),
+
+      toggleFavorite: (movie) => {
+        const { isFavorited, addToFavorites, removeFromFavorites } = get();
+        if (isFavorited(movie.id)) {
+          removeFromFavorites(movie.id);
+        } else {
+          addToFavorites(movie);
+        }
+      },
+
+      isFavorited: (movieId) => {
+        return get().favorites.some((m) => m.id === movieId);
+      },
+
+      addToSearchHistory: (query) => {
+        set((state) => ({
+          searchHistory: [
+            query,
+            ...state.searchHistory.filter((q) => q !== query).slice(0, 9),
+          ],
+        }));
+      },
+
+      clearSearchHistory: () =>
+        set({
+          searchHistory: [],
+        }),
+    }),
+    {
+      name: STORAGE_KEYS.favorites,
+    }
+  )
+);
