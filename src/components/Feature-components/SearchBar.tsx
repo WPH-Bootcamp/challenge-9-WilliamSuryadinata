@@ -1,34 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import searchIcon from '../../assets/icon/search.png';
 
 interface SearchBarProps {
-  // Jika Anda nanti menggunakan global state (Zustand), prop ini bisa disesuaikan
   onSearchChange?: (query: string) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearchChange }) => {
-  const [query, setQuery] = useState('');
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  // Mengambil nilai awal dari URL
+  const initialQuery = searchParams.get('q') || '';
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setQuery(value);
 
     if (onSearchChange) {
       onSearchChange(value);
     }
 
-    // CATATAN LOGIKA: Untuk membuat pencarian case-insensitive (UPPERCASE/lowercase),
-    // pada komponen filter data film nanti gunakan format seperti ini:
-    // const filtered = movies.filter(movie =>
-    //   movie.title.toLowerCase().includes(value.toLowerCase())
-    // );
+    if (value.trim() !== '') {
+      navigate(`/search?q=${encodeURIComponent(value)}`);
+    } else {
+      navigate('/');
+    }
   };
 
   return (
     <div className="relative w-full max-w-xs sm:max-w-sm">
       <input
+        key={initialQuery}
         type="text"
-        value={query}
+        defaultValue={initialQuery}
         onChange={handleInputChange}
         placeholder="Search movie..."
         className="w-full bg-[#252B37] text-white text-sm rounded-2xl pl-12 pr-4 py-4 border border-white/20 focus:outline-none focus:border-white/50 focus:bg-white/20 backdrop-blur-sm transition-all placeholder:text-white/50 text-[15px]"

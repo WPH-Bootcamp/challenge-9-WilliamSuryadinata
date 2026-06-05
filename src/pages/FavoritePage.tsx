@@ -2,49 +2,54 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Layout-components/Navbar';
 import Footer from '../components/Layout-components/Footer';
+import { useMovieStore, type MovieItem } from '../store/movieStore';
 
-// ==========================================
-// IMPORT ICON
-// ==========================================
+// Import Icon
 import starIcon from '../assets/icon/Star.png';
 import playIcon from '../assets/icon/Play.png';
-// Pastikan nama file gambar frame 52 Anda sesuai huruf besar/kecilnya
 import frameEmptyIcon from '../assets/icon/Frame 52.png';
 
-interface FavoriteMovie {
-  id: string;
-  title: string;
-  image: string;
-  rating: string;
-  description: string;
-}
-
 const FavoritePage: React.FC = () => {
-  const [favorites, setFavorites] = useState<FavoriteMovie[]>([]);
+  // Ambil data dan fungsi langsung dari store
+  const { favorites, toggleFavorite } = useMovieStore();
+  const [showNotification, setShowNotification] = useState(false);
 
-  // Mengambil data favorit dari penyimpanan browser saat halaman dimuat
   useEffect(() => {
     window.scrollTo(0, 0);
-    const savedFavorites = JSON.parse(localStorage.getItem('movieFavorites') || '[]');
-    setFavorites(savedFavorites);
   }, []);
 
-  // Fungsi untuk menghapus film dari daftar favorit
-  const removeFavorite = (idToRemove: string) => {
-    const updatedFavorites = favorites.filter((movie) => movie.id !== idToRemove);
-    setFavorites(updatedFavorites);
-    localStorage.setItem('movieFavorites', JSON.stringify(updatedFavorites)); // Simpan perubahan
+  const handleRemove = (movie: MovieItem) => {
+    toggleFavorite(movie);
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
   };
 
   return (
     <div className="relative w-full min-h-screen bg-black text-white flex flex-col overflow-x-hidden">
+      {showNotification && (
+        <div className="fixed top-28 md:top-36 left-1/2 transform -translate-x-1/2 z-[100] flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-md border border-white/10 px-8 py-3.5 md:w-[400px] rounded-full shadow-2xl transition-all duration-300">
+          <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center shrink-0">
+            <svg
+              className="w-3.5 h-3.5 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth="3"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <span className="text-white text-sm md:text-base font-medium tracking-wide">
+            Success Remove from Favorites
+          </span>
+        </div>
+      )}
+
       <Navbar />
 
       <main className="flex-1 max-w-[1280px] w-full mx-auto px-6 md:px-12 pt-28 md:pt-36 pb-12">
-        {/* Judul Favorite Selalu Ada di Kiri */}
         <h1 className="text-3xl md:text-4xl font-bold mb-8 tracking-wide">Favorite</h1>
 
-        {/* KONDISI 1: JIKA TIDAK ADA FAVORIT (KOSONG) */}
         {favorites.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 md:py-24">
             <img
@@ -57,20 +62,18 @@ const FavoritePage: React.FC = () => {
               You don't have a favorite movie yet.
             </p>
             <Link to="/">
-              <button className="bg-[#a10000] hover:bg-red-700 text-white font-bold text-sm md:text-base px-8 py-3.5 rounded-full active:scale-95 transition-all shadow-lg">
+              <button className="bg-[#961200] hover:bg-[#7a0f00] text-white font-bold text-sm md:text-base px-8 py-3.5 rounded-full active:scale-95 transition-all shadow-lg">
                 Explore Movie
               </button>
             </Link>
           </div>
         ) : (
-          /* KONDISI 2: JIKA ADA DATA FAVORIT */
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col">
             {favorites.map((movie) => (
               <div
                 key={movie.id}
-                className="bg-[#0A0D1299] border border-white/10 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row gap-6 md:gap-8 backdrop-blur-md"
+                className="py-8 border-b border-white/10 last:border-b-0 flex flex-col md:flex-row gap-6 md:gap-8"
               >
-                {/* Gambar Poster Kiri */}
                 <div className="w-full md:w-56 shrink-0">
                   <img
                     src={movie.image}
@@ -78,17 +81,12 @@ const FavoritePage: React.FC = () => {
                     className="w-full h-auto rounded-xl object-cover shadow-lg"
                   />
                 </div>
-
-                {/* Info Detail Kanan */}
                 <div className="flex flex-col flex-1 relative py-2">
-                  {/* Judul & Icon Love Merah (Bisa dihapus) */}
                   <div className="flex justify-between items-start pr-12 md:pr-14">
                     <h2 className="text-2xl md:text-3xl font-bold">{movie.title}</h2>
-                    {/* Icon Love Absolute di Kanan Atas */}
                     <button
-                      onClick={() => removeFavorite(movie.id)}
+                      onClick={() => handleRemove(movie)}
                       className="absolute top-2 right-2 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-white/5 hover:bg-white/20 border border-white/10 rounded-full active:scale-95 transition-all"
-                      title="Remove from favorites"
                     >
                       <svg
                         width="20"
@@ -101,29 +99,33 @@ const FavoritePage: React.FC = () => {
                       </svg>
                     </button>
                   </div>
-
-                  {/* Rating Bintang */}
                   <div className="flex items-center space-x-2 mt-2">
                     <img src={starIcon} alt="Star" className="w-4 h-4 object-contain" />
                     <span className="text-[#A4A7AE] text-sm md:text-base font-medium">
                       {movie.rating}
                     </span>
                   </div>
-
-                  {/* Deskripsi */}
                   <p className="mt-4 text-[#A4A7AE] text-sm md:text-[15px] leading-relaxed text-justify line-clamp-4">
                     {movie.description}
                   </p>
-
-                  {/* Tombol Watch Trailer di Bawah */}
-                  <div className="mt-auto pt-6">
-                    <button className="flex items-center space-x-3 bg-[#a10000] hover:bg-red-700 text-white font-bold text-sm md:text-base px-8 py-3.5 rounded-full active:scale-95 transition-all shadow-lg w-fit">
+                  <div className="mt-5">
+                    <button className="flex items-center space-x-3 md:space-x-4 bg-[#961200] text-white font-bold text-xs md:text-sm lg:text-base pl-5 pr-1.5 py-1.5 md:pl-6 md:pr-2 md:py-2 rounded-full hover:bg-[#7a0f00] active:scale-95 transition-all shadow-lg w-fit pointer-events-none">
                       <span>Watch Trailer</span>
-                      <img
-                        src={playIcon}
-                        alt="Play"
-                        className="w-4 h-4 md:w-5 md:h-5 object-contain filter invert"
-                      />
+                      <div className="bg-white w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center shrink-0 shadow-sm">
+                        <div
+                          className="w-3 h-3 md:w-4 md:h-4 bg-[#961200] ml-0.5"
+                          style={{
+                            WebkitMaskImage: `url('${playIcon}')`,
+                            WebkitMaskSize: 'contain',
+                            WebkitMaskRepeat: 'no-repeat',
+                            WebkitMaskPosition: 'center',
+                            maskImage: `url('${playIcon}')`,
+                            maskSize: 'contain',
+                            maskRepeat: 'no-repeat',
+                            maskPosition: 'center',
+                          }}
+                        />
+                      </div>
                     </button>
                   </div>
                 </div>

@@ -6,7 +6,7 @@ interface MovieCardProps {
   title: string;
   image: string;
   rating: string;
-  rank?: number; // Jika ada, tampilkan lingkaran nomor
+  rank?: number;
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({ title, image, rating, rank }) => {
