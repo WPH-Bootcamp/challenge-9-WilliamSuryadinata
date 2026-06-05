@@ -1,21 +1,34 @@
-// import api from '@/lib/axios';
-// import { Movie, MovieResponse } from '@/types/movie';
+import api from '@/lib/axios';
+import type { Movie, MovieResponse, MovieDetail } from '@/types/movie';
 
-// TODO: Create service functions to fetch data from TMDB API
-// Reference: https://developer.themoviedb.org/reference/intro/getting-started
 
 export const movieService = {
-  // TODO: Implement getPopularMovies function
-  // Endpoint: GET /movie/popular
+  getPopularMovies: (page: number = 1): Promise<MovieResponse> =>
+    api.get<MovieResponse>('/movie/popular', { params: { page } }).then((res) => res.data),
 
-  // TODO: Implement getNowPlayingMovies function
-  // Endpoint: GET /movie/now_playing
+  getNowPlayingMovies: (page: number = 1): Promise<MovieResponse> =>
+    api.get<MovieResponse>('/movie/now_playing', { params: { page } }).then((res) => res.data),
 
-  // TODO: Implement getMovieDetails function
-  // Endpoint: GET /movie/{movie_id}
+  getMovieDetails: (movieId: number): Promise<MovieDetail> =>
+    api
+      .get<MovieDetail>(`/movie/${movieId}`, {
+        params: {
+          append_to_response: 'credits,videos',
+        },
+      })
+      .then((res) => res.data),
 
-  // TODO: Implement searchMovies function
-  // Endpoint: GET /search/movie
+  searchMovies: (query: string, page: number = 1): Promise<MovieResponse> =>
+    api.get<MovieResponse>('/search/movie', { params: { query, page } }).then((res) => res.data),
 
-  // TODO: Add more endpoints as needed
+  getUpcomingMovies: (page: number = 1): Promise<MovieResponse> =>
+    api.get<MovieResponse>('/movie/upcoming', { params: { page } }).then((res) => res.data),
+
+  getTopRatedMovies: (page: number = 1): Promise<MovieResponse> =>
+    api.get<MovieResponse>('/movie/top_rated', { params: { page } }).then((res) => res.data),
+
+  getSimilarMovies: (movieId: number, page: number = 1): Promise<MovieResponse> =>
+    api
+      .get<MovieResponse>(`/movie/${movieId}/similar`, { params: { page } })
+      .then((res) => res.data),
 };
