@@ -11,6 +11,8 @@ export function cn(...inputs: ClassValue[]) {
 // Reference: https://developer.themoviedb.org/docs/image-basics
 
 export function getImageUrl(_path: string, _: string = 'original'): string {
+  void _path;
+  void _;
   // TODO: Implement image URL construction
   // Use VITE_TMDB_IMAGE_BASE_URL from environment variables
   return '';
