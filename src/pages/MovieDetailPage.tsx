@@ -20,9 +20,9 @@ import timImg from '../assets/image/Tim Blake Nelson.png';
 // ==========================================
 import calendarIcon from '../assets/icon/calendar.png';
 import playIcon from '../assets/icon/Play.png';
-import loveIcon from '../assets/icon/love.png';
+import loveIcon from '../assets/icon/Love.png';
 import starIcon from '../assets/icon/Star.png';
-import recordIcon from '../assets/icon/record.png';
+import recordIcon from '../assets/icon/Record.png';
 import emojiIcon from '../assets/icon/emoji-happy.png';
 
 const MovieDetailPage: React.FC = () => {
