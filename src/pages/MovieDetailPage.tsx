@@ -166,7 +166,7 @@ const MovieDetailPage: React.FC = () => {
                 <img
                   src={anthonyImg}
                   alt="Anthony Mackie"
-                  className="w-14 h-14 md:w-16 md:h-16 rounded-xl object-cover"
+                  className="w-14 h-22 md:w-16 md:h-22 rounded-xl object-cover"
                 />
                 <div className="flex flex-col">
                   <span className="font-bold text-white text-sm md:text-base mb-0.5">
@@ -181,7 +181,7 @@ const MovieDetailPage: React.FC = () => {
                 <img
                   src={harrisonImg}
                   alt="Harrison Ford"
-                  className="w-14 h-14 md:w-16 md:h-16 rounded-xl object-cover"
+                  className="w-14 h-22 md:w-16 md:h-22 rounded-xl object-cover"
                 />
                 <div className="flex flex-col">
                   <span className="font-bold text-white text-sm md:text-base mb-0.5">
@@ -194,7 +194,7 @@ const MovieDetailPage: React.FC = () => {
                 <img
                   src={dannyImg}
                   alt="Danny Ramirez"
-                  className="w-14 h-14 md:w-16 md:h-16 rounded-xl object-cover"
+                  className="w-14 h-22 md:w-16 md:h-22 rounded-xl object-cover"
                 />
                 <div className="flex flex-col">
                   <span className="font-bold text-white text-sm md:text-base mb-0.5">
@@ -207,7 +207,7 @@ const MovieDetailPage: React.FC = () => {
                 <img
                   src={shiraImg}
                   alt="Shira Haas"
-                  className="w-14 h-14 md:w-16 md:h-16 rounded-xl object-cover"
+                  className="w-14 h-22 md:w-16 md:h-22 rounded-xl object-cover"
                 />
                 <div className="flex flex-col">
                   <span className="font-bold text-white text-sm md:text-base mb-0.5">
@@ -220,7 +220,7 @@ const MovieDetailPage: React.FC = () => {
                 <img
                   src={timImg}
                   alt="Tim Blake Nelson"
-                  className="w-14 h-14 md:w-16 md:h-16 rounded-xl object-cover"
+                  className="w-14 h-22 md:w-16 md:h-22 rounded-xl object-cover"
                 />
                 <div className="flex flex-col">
                   <span className="font-bold text-white text-sm md:text-base mb-0.5">
